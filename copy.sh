@@ -14,8 +14,7 @@ done
 read -e -p "What is the filepath of the directory you want as the destination?" DEST;
 while [[ ! -d "$DEST" ]]; do
         echo "That isn't a real destination, try again chump.";
-     read -e -p "What is the filepath of the directory you want as the destination? Remember the folder used as source is placed IN here " 
-DEST;
+     read -e -p "What is the filepath of the directory you want as the destination? Remember the folder used as source is placed IN here " DEST;
 done
 
 #confirmation prompt continues on yes, exits on no
@@ -27,10 +26,11 @@ select yn in "Yes" "No"; do
 esac
 done
 
-# Correcting the destination so source folder goes where user would expect 
+# Correcting the destination so source folder goes where user would expect
 cd $DEST
 cd ..
-REALDEST="$PWD"
+REALDEST="$(PWD -P)"
+echo $REALDEST
 
 # rsync transfer including progress during transfer and stats at end
 rsync -az --progress --stats $SOURCE $REALDEST
@@ -42,80 +42,39 @@ rsync -az --progress --stats $SOURCE $REALDEST
 #du -cg $REALDEST | sort -n | tail -1
 
 
-# This gives a human readable confirmation on success or failure of sync 
+# This gives a human readable confirmation on success or failure of sync
 SOURCESIZE="$(du -cg $SOURCE | sort -n | tail -1 | sed 's/[^0-9]//g')"
 DESTSIZE="$(du -cg $DEST | sort -n | tail -1 | sed 's/[^0-9]//g')"
 
-if [ $SOURCESIZE -gt $DESTSIZE ] ; then
-    echo "
-________________________¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶________
-____________________¶¶¶___________________¶¶¶¶_____
-________________¶¶¶_________________________¶¶¶¶___
-______________¶¶______________________________¶¶¶__
-___________¶¶¶_________________________________¶¶¶_
-_________¶¶_____________________________________¶¶¶
-________¶¶_________¶¶¶¶¶___________¶¶¶¶¶_________¶¶
-______¶¶__________¶¶¶¶¶¶__________¶¶¶¶¶¶_________¶¶
-_____¶¶___________¶¶¶¶____________¶¶¶¶___________¶¶
-____¶¶___________________________________________¶¶
-___¶¶___________________________________________¶¶_
-__¶¶____________________¶¶¶¶____________________¶¶_
-_¶¶_______________¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶______________¶¶__
-_¶¶____________¶¶¶¶___________¶¶¶¶¶___________¶¶___
-¶¶¶_________¶¶¶__________________¶¶__________¶¶____
-¶¶_________¶______________________¶¶________¶¶_____
-¶¶¶______¶________________________¶¶_______¶¶______
-¶¶¶_____¶_________________________¶¶_____¶¶________
-_¶¶¶___________________________________¶¶__________
-__¶¶¶________________________________¶¶____________
-___¶¶¶____________________________¶¶_______________
-____¶¶¶¶______________________¶¶¶__________________
-_______¶¶¶¶¶_____________¶¶¶¶¶_____________________
+if [ $SOURCESIZE -gt $DESTSIZE ] ; then 
+echo "
+________________  .___.____     
+\_   _____/  _  \ |   |    |    
+ |    __)/  /_\  \|   |    |    
+ |     \/    |    \   |    |___ 
+ \___  /\____|__  /___|_______ \
+     \/         \/            \/
+No Dinosaur, no love.
 
+Something is off!
 
-Something is off!Take a look to see if anything important is missing!"
-fi
+Take a look to see if anything important is missing!"
 
-if [ $SOURCESIZE -lt $DESTSIZE ] ; then
-    echo "
-
-                     ***                  ***
-                    *****                *****
-                    *****                *****
-                     ***                  ***
-          ***                                        ***
-           ***                                      ***
-            ***                                    ***
-             ***                                  ***
-               ***                              ***
-                 ***                          ***
-                   ***                      ***
-                      **********************
-                         ****************
-
-
-
-SUCCESS!"
-fi
-
-if [ $SOURCESIZE" -eq "$DESTSIZE ] ; then
-    echo "
-
-                     ***                  ***
-                    *****                *****
-                    *****                *****
-                     ***                  ***
-          ***                                        ***
-           ***                                      ***
-            ***                                    ***
-             ***                                  ***
-               ***                              ***
-                 ***                          ***
-                   ***                      ***
-                      **********************
-                         ****************
-
-
+else 
+echo "Happy Dino!
+ __      __.__      ._.
+/  \    /  \__| ____| |
+\   \/\/   /  |/    \ |
+ \        /|  |   |  \|
+  \__/\  / |__|___|  /_
+       \/          \/\/
+               __
+              / _)
+     _/\/\/\_/ /
+   _|         /
+ _|  (  | (  |
+/__.-'|_|--|_|
+               
 
 SUCCESS!"
 fi
